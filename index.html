@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f2ec">
+<title>MyLibrary · by Fozzi</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E📖%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ БИБЛИОТЕКА ============ -->
+<section id="library-screen" class="screen active">
+  <header class="lib-header">
+    <div class="lib-title">
+      <span class="logo">📖</span>
+      <div class="lt-text">
+        <h1>MyLibrary</h1>
+        <span class="byline">by Fozzi</span>
+      </div>
+    </div>
+    <div class="lib-actions">
+      <button id="add-book-btn" class="btn-primary">+ Добавить книгу</button>
+    </div>
+    <input type="file" id="file-input" accept=".txt,.fb2,.epub" multiple hidden>
+    <div class="lib-search">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="search" id="lib-search" placeholder="Поиск книг…">
+    </div>
+  </header>
+
+  <div id="books-view">
+  <button id="continue-card" hidden></button>
+
+  <main id="book-grid" class="book-grid"></main>
+
+  <div id="empty-state" class="empty" hidden>
+    <svg viewBox="0 0 120 120" width="110" height="110" fill="none" aria-hidden="true">
+      <rect x="20" y="26" width="80" height="66" rx="6" fill="#eceafd"/>
+      <path d="M60 34c-8-6-22-6-30-3v52c8-3 22-3 30 3 8-6 22-6 30-3V31c-8-3-22-3-30 3z" fill="#fff" stroke="#5a54d1" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M60 34v52" stroke="#5a54d1" stroke-width="3"/>
+      <path d="M38 44h14M38 54h14M38 64h10M68 44h14M68 54h14M68 64h10" stroke="#c9c4f0" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="97" cy="90" r="14" fill="#5a54d1"/>
+      <path d="M97 83v14M90 90h14" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+    </svg>
+    <h2>Библиотека пуста</h2>
+    <p>Добавьте книги в форматах TXT, FB2 или EPUB —<br>они сохранятся прямо в браузере, без сервера</p>
+    <div class="empty-actions">
+      <button class="btn-primary" id="empty-add-btn">Выбрать файлы</button>
+      <button class="btn-ghost" id="sample-btn">Открыть пример</button>
+    </div>
+  </div>
+
+  <footer class="lib-footer">MyLibrary · by Fozzi</footer>
+  </div>
+
+  <div id="quotes-view" hidden>
+    <ul id="quotes-list" class="quotes-list"></ul>
+    <div id="quotes-empty" class="empty" hidden>
+      <div class="q-mark">❝</div>
+      <h2>Цитат пока нет</h2>
+      <p>Выделите текст при чтении и нажмите «В цитаты» —<br>здесь соберутся цитаты из всех книг</p>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="bn-item active" id="tab-books"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg><span>Книги</span></button>
+    <button class="bn-item" id="tab-quotes"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M7.2 6h4.6v4.3c0 3.4-1.9 5.6-4.2 6.9l-1.2-1.6c1.5-.9 2.5-2.1 2.7-3.7H7.2V6zm8.6 0h4.6v4.3c0 3.4-1.9 5.6-4.2 6.9l-1.2-1.6c1.5-.9 2.5-2.1 2.7-3.7h-1.9V6z"/></svg><span>Цитаты</span></button>
+  </nav>
+</section>
+
+<!-- ============ ЧТЕНИЕ ============ -->
+<section id="reader-screen" class="screen" data-theme="light">
+  <main id="reader-viewport">
+    <div id="reader-clip">
+      <div id="reader-content"></div>
+    </div>
+  </main>
+
+  <button id="sel-quote-btn" hidden>＋ В цитаты</button>
+
+  <header class="reader-bar top" id="reader-top">
+    <button class="icon-btn" id="back-btn" aria-label="Назад">←</button>
+    <div class="reader-title" id="reader-title"></div>
+    <button class="icon-btn" id="search-btn" aria-label="Поиск по книге"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+    <button class="icon-btn" id="bm-toggle" aria-label="Закладка"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg></button>
+    <button class="icon-btn" id="toc-btn" aria-label="Содержание">☰</button>
+    <button class="icon-btn font-btn" id="settings-btn" aria-label="Настройки чтения">Aa</button>
+  </header>
+
+  <footer class="reader-bar bottom" id="reader-bottom">
+    <button class="nav-btn" id="prev-ch">‹<span class="nav-label">Глава</span></button>
+    <div class="progress-info" id="progress-info"></div>
+    <button class="nav-btn" id="next-ch"><span class="nav-label">Глава</span>›</button>
+  </footer>
+
+  <aside class="drawer" id="toc-drawer">
+    <div class="drawer-head">
+      <div class="tabs">
+        <button class="tab active" id="tab-toc">Содержание</button>
+        <button class="tab" id="tab-bm">Закладки</button>
+        <button class="tab" id="tab-q">Цитаты</button>
+      </div>
+      <button class="icon-btn" id="toc-close" aria-label="Закрыть">✕</button>
+    </div>
+    <ul id="toc-list"></ul>
+    <ul id="bm-list" hidden></ul>
+    <ul id="q-list" hidden></ul>
+  </aside>
+
+  <aside class="drawer" id="search-panel">
+    <div class="drawer-head"><span>Поиск по книге</span><button class="icon-btn" id="search-close" aria-label="Закрыть">✕</button></div>
+    <div class="search-box">
+      <input type="search" id="search-input" placeholder="Слово или фраза…" autocomplete="off">
+    </div>
+    <div class="search-meta" id="search-meta"></div>
+    <ul id="search-results"></ul>
+  </aside>
+
+  <aside class="drawer" id="settings-panel">
+    <div class="drawer-head"><span>Настройки чтения</span><button class="icon-btn" id="settings-close" aria-label="Закрыть">✕</button></div>
+    <div class="set-row">
+      <span class="set-label">Тема</span>
+      <div class="seg" id="theme-seg">
+        <button data-theme="light">Светлая</button>
+        <button data-theme="sepia">Сепия</button>
+        <button data-theme="dark">Тёмная</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">Шрифт</span>
+      <div class="seg" id="family-seg">
+        <button data-family="serif" style="font-family:Georgia,'Times New Roman',serif">Абв</button>
+        <button data-family="sans" style="font-family:system-ui,sans-serif">Абв</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">Размер</span>
+      <div class="stepper">
+        <button id="fs-minus" aria-label="Уменьшить">−</button>
+        <b id="fs-val">18</b>
+        <button id="fs-plus" aria-label="Увеличить">+</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">Интервал</span>
+      <div class="seg" id="lh-seg">
+        <button data-lh="1.45">Тесный</button>
+        <button data-lh="1.65">Средний</button>
+        <button data-lh="1.9">Широкий</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="overlay" id="drawer-overlay"></div>
+</section>
+
+<div id="drop-overlay">
+  <div class="drop-box">📚<br>Отпустите, чтобы добавить книги<br><small>TXT · FB2 · EPUB</small></div>
+</div>
+<div id="toast"></div>
+
+<script src="libs/jszip.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
